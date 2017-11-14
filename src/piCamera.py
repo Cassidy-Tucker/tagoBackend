@@ -1,7 +1,11 @@
 import cv2
 from picamera.array import PiRGBArray
 from picamera import PiCamera
+import numpy as np
 import time
+
+def nothing(x):
+    pass
 
 camera = PiCamera()
 camera.vflip = True
@@ -12,15 +16,25 @@ rawCapture = PiRGBArray(camera)
 
 fgbg = cv2.createBackgroundSubtractorMOG2()
 
+heatmap = np.zeros((480,640))
+
+cv2.namedWindow('mask')
+cv2.createTrackbar('backgroundRatio', 'mask', 1, 100, nothing)
+
 time.sleep(0.1)
 
 for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
+    learning = float(cv2.getTrackbarPos('backgroundRatio', 'mask') / 100)
+
     image = frame.array
 
-    mask = fgbg.apply(image)
+    image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    mask = fgbg.apply(image_gray)
 
-    cv2.imshow('Frame', mask)
-
+    activeLocations = np.nonzero(mask)
+    
+    cv2.imshow('mask', mask)
+    cv2.imshow('frame', activeLocations)
     rawCapture.truncate(0)
 
     if cv2.waitKey(1) & 0xff == ord('q'):
