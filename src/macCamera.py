@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import time
+import zones
 
 def nothing(x):
     pass
@@ -14,11 +15,16 @@ w, h, _ = frame.shape
 
 time.sleep(0.1)
 
+# window setup
+cv2.namedWindow('frame')
 cv2.namedWindow('heatMap')
+
 cv2.createTrackbar('Subtract', 'heatMap', 1, 100, nothing)
 
-# print subtract
-heatMap = np.zeros((w/2, h/2), dtype=np.uint64)
+# setup callbacks
+cv2.setMouseCallback('frame', zones.setSquare)
+
+heatMap = np.zeros((w/2, h/2), dtype=np.uint8)
 
 while True:
     _, frame = cap.read()
@@ -32,8 +38,12 @@ while True:
     mask = fgbg.apply(frame)
 
     heatMap = cv2.addWeighted(heatMap, .995, mask, .005, 0);
-    heatMap = heatMap - subtract
+    # heatMap = heatMap - subtract
 
+    if zones.rectReady == True:
+        frame = zones.drawSquare(frame)
+
+    cv2.imshow('frame', frame)
     cv2.imshow('heatMap', heatMap)
     cv2.imshow('Mask', mask)
     if cv2.waitKey(1) & 0xff == ord('q'):
