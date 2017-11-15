@@ -2,6 +2,7 @@ import cv2
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
+import numpy as np
 
 camera = PiCamera()
 camera.vflip = True
@@ -12,6 +13,8 @@ rawCapture = PiRGBArray(camera)
 
 fgbg = cv2.createBackgroundSubtractorMOG2()
 
+heatMap = numpy.zeros((640, 480), dtype=np.uint8)
+
 time.sleep(0.1)
 
 for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
@@ -19,6 +22,9 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 
     mask = fgbg.apply(image)
 
+    heatMap = cv2.addWeighted(heatMap, .995, mask, .005, 0)
+
+    cv2.imshow('Heatmap', heatMap)
     cv2.imshow('Frame', mask)
 
     rawCapture.truncate(0)
