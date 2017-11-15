@@ -3,11 +3,14 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import numpy as np
 import time
-import numpy as np
 
 def nothing(x):
     pass
 
+imageNumber = 1
+saveImage = True
+
+# setup camera
 camera = PiCamera()
 camera.vflip = True
 camera.hflip = True
@@ -15,24 +18,42 @@ camera.resolution = (640, 480)
 camera.framerate = 32
 rawCapture = PiRGBArray(camera)
 
-fgbg = cv2.createBackgroundSubtractorMOG2()
+# setup background subtractor
+fgbg = cv2.createBackgroundSubtractorMOG2(varThreshold=80, detectShadows=True)
 
-heatMap = numpy.zeros((640, 480), dtype=np.uint8)
+cv2.namedWindow('mask')
+cv2.createTrackbar('Learning Rate', 'mask', 1, 100, nothing)
+
+# setup blank heatmap
+heatMap = np.zeros((480, 640), dtype=np.uint8)
+
 
 time.sleep(0.1)
 
 for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
-    learning = float(cv2.getTrackbarPos('backgroundRatio', 'mask') / 100)
+    learningRate = float(cv2.getTrackbarPos('Learning Rate', 'mask') / 100)
 
     image = frame.array
 
     image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    mask = fgbg.apply(image_gray)
+    mask = fgbg.apply(image, learningRate)
+    
+    heatMap = cv2.addWeighted(heatMap, .97, mask, .03, 0)
+    
+    heatMap_color = cv2.applyColorMap(heatMap, cv2.COLORMAP_JET)
 
-    activeLocations = np.nonzero(mask)
+    while time.localtime().tm_sec % 5 == 0:
+        if saveImage == True:
+            cv2.imwrite('./public/img/area' + str(imageNumber) + '.jpg', heatMap_color)
+            saveImage = False
+            imageNumber += 1
+            print "Saved Image"
 
+    saveImage = True
+        
+    cv2.imshow('image', image)
     cv2.imshow('mask', mask)
-    cv2.imshow('frame', activeLocations)
+    cv2.imshow('heatmap', heatMap_color)
     rawCapture.truncate(0)
 
     if cv2.waitKey(1) & 0xff == ord('q'):

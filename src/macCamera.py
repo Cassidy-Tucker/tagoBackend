@@ -18,7 +18,7 @@ cv2.namedWindow('heatMap')
 cv2.createTrackbar('Subtract', 'heatMap', 1, 100, nothing)
 
 # print subtract
-heatMap = np.zeros((w/2, h/2), dtype=np.uint8)
+heatMap = np.zeros((w/2, h/2), dtype=np.uint64)
 
 while True:
     _, frame = cap.read()
