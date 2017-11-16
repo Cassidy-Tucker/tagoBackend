@@ -1,32 +1,39 @@
 import cv2
 
-x1,y1 = -1, -1
-x2,y2 = -1, -1
-drawing, rectReady = False, False
+class Zone:
+    def __init__(self):
+        self.x = -1
+        self.y = -1
+        self.width = -1
+        self.height = -1
+        self.drawing = False
+        self.rectReady = False
 
-def setSquare(event, x, y, flags, params):
-    global x1, y1, x2, y2, rectReady, drawing
+    def setSquare(self, event, x, y, flags, params):
+        print event
+        if event == cv2.EVENT_LBUTTONDOWN:
+            self.rectReady = False
+            self.drawing = True
+            self.x = x
+            self.y = y
+            print "left mouse button down: " + str(self.x) + " " + str(self.y)
+        elif event == cv2.EVENT_MOUSEMOVE:
+            if self.drawing == True:
+                self.rectReady = True
+                self.width = x - self.x
+                self.height = y - self.y
+                print "Mouse Move: " + str(self.width) + " " + str(self.height)
+        elif event == cv2.EVENT_LBUTTONUP:
+            self.drawing = False;
+            self.rectReady = True
+            self.width = x - self.x
+            self.height = y - self.y
+            print "Mouse Up: " + str(self.width) + " " + str(self.height)
 
-    print event
-    if event == cv2.EVENT_LBUTTONDOWN:
-        rectReady = False
-        drawing = True
-        x1 = x
-        y1 = y
-        print "left mouse button down: " + str(x1) + " " + str(y1)
-    elif event == cv2.EVENT_MOUSEMOVE:
-        if drawing == True:
-            rectReady = True
-            x2 = x
-            y2 = y
-            print "Mouse Move: " + str(x2) + " " + str(y2)
-    elif event == cv2.EVENT_LBUTTONUP:
-        drawing = False;
-        rectReady = True
-        x2 = x
-        y2 = y
-        print "Mouse Up: " + str(x2) + " " + str(y2)
+    def drawSquare(self, frame):
+        cv2.rectangle(frame, (self.x, self.y), (self.x + self.width, self.y + self.height), (0,0,255), thickness=2)
+        return frame
 
-def drawSquare(frame):
-    cv2.rectangle(frame, (x1, y1), (x2, y2), (0,0,255), thickness=2)
-    return frame
+    def getRoiValue(self, frame):
+        frame = frame[self.y : self.y + self.height, self.x : self.x + self.width]
+        cv2.imwrite('roi.jpg', frame)

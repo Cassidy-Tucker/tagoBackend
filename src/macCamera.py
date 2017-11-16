@@ -1,17 +1,20 @@
 import cv2
 import numpy as np
 import time
-import zones
+from zones import Zone
 
 def nothing(x):
     pass
 
+saveImage = False
+imageNumber = 0
+zone1 = Zone()
+
 cap = cv2.VideoCapture(0)
-
-fgbg = cv2.createBackgroundSubtractorMOG2()
-
 _, frame = cap.read()
 w, h, _ = frame.shape
+
+fgbg = cv2.createBackgroundSubtractorMOG2()
 
 time.sleep(0.1)
 
@@ -22,7 +25,7 @@ cv2.namedWindow('heatMap')
 cv2.createTrackbar('Subtract', 'heatMap', 1, 100, nothing)
 
 # setup callbacks
-cv2.setMouseCallback('frame', zones.setSquare)
+cv2.setMouseCallback('frame', zone1.setSquare)
 
 heatMap = np.zeros((w/2, h/2), dtype=np.uint8)
 
@@ -40,8 +43,18 @@ while True:
     heatMap = cv2.addWeighted(heatMap, .995, mask, .005, 0);
     # heatMap = heatMap - subtract
 
-    if zones.rectReady == True:
-        frame = zones.drawSquare(frame)
+    if zone1.rectReady == True:
+        frame = zone1.drawSquare(frame)
+
+    while time.localtime().tm_sec % 5 == 0:
+        if saveImage == True:
+            # cv2.imwrite('./public/img/area' + str(imageNumber) + '.jpg', heatMap_color)
+            zone1.getRoiValue(frame)
+            saveImage = False
+            imageNumber += 1
+            print "Saved Image"
+
+    saveImage = True
 
     cv2.imshow('frame', frame)
     cv2.imshow('heatMap', heatMap)
