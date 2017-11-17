@@ -45,7 +45,6 @@ while True:
     if zone1.rectReady == True:
         frame = zone1.drawSquare(frame)
 
-    # save images every five seconds
     while time.localtime().tm_sec % 5 == 0:
         if saveImage == True:
             # cv2.imwrite('./public/img/area' + str(imageNumber) + '.jpg', heatMap_color)
@@ -56,12 +55,9 @@ while True:
 
     saveImage = True
 
-    # Display Images
     cv2.imshow('frame', frame)
     cv2.imshow('heatMap', heatMap)
     cv2.imshow('Mask', mask)
-
-    # close window
     if cv2.waitKey(1) & 0xff == ord('q'):
         break
 
