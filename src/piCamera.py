@@ -49,12 +49,13 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     heatMap_color = cv2.applyColorMap(heatMap, cv2.COLORMAP_JET)
 
     if zone1.rectReady == True:
-        frame = zone1.drawSquare(frame)
+        frame = zone1.drawSquare(image)
 
     while time.localtime().tm_sec % 5 == 0:
         if saveImage == True:
+	    print bytearray(heatMap_color)[0]
             cv2.imwrite('./public/img/area' + str(imageNumber) + '.jpg', heatMap_color)
-            zone1.getRoiValue(frame)
+            zone1.getRoiValue(heatMap)
             saveImage = False
             imageNumber += 1
             print "Saved Image"

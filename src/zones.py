@@ -37,3 +37,5 @@ class Zone:
     def getRoiValue(self, frame):
         frame = frame[self.y : self.y + self.height, self.x : self.x + self.width]
         cv2.imwrite('roi.jpg', frame)
+	frameMean = cv2.mean(frame)
+	print frameMean
