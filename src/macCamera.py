@@ -41,7 +41,6 @@ while True:
     mask = fgbg.apply(frame)
 
     heatMap = cv2.addWeighted(heatMap, .995, mask, .005, 0);
-    # heatMap = heatMap - subtract
 
     if zone1.rectReady == True:
         frame = zone1.drawSquare(frame)
@@ -61,9 +60,6 @@ while True:
     cv2.imshow('Mask', mask)
     if cv2.waitKey(1) & 0xff == ord('q'):
         break
-    if cv2.waitKey(1) & 0xff == ord('p'):
-        print "image saved"
-        cv2.imwrite('cap.jpg', heatMap)
 
 cv2.destroyAllWindows()
 cap.release()
