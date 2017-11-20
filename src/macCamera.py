@@ -2,13 +2,18 @@ import cv2
 import numpy as np
 import time
 from zones import Zone
+import uploadData
 
 def nothing(x):
     pass
 
 saveImage = False
 imageNumber = 0
-zone1 = Zone()
+
+zones = [Zone()]
+
+uploadData.createArea("TestArea", "it's in a room on the north side")
+uploadData.createZone(zones)
 
 cap = cv2.VideoCapture(0)
 _, frame = cap.read()
@@ -25,7 +30,7 @@ cv2.namedWindow('heatMap')
 cv2.createTrackbar('Subtract', 'heatMap', 1, 100, nothing)
 
 # setup callbacks
-cv2.setMouseCallback('frame', zone1.setSquare)
+cv2.setMouseCallback('frame', zones[0].setSquare)
 
 heatMap = np.zeros((w/2, h/2), dtype=np.uint8)
 
@@ -42,16 +47,15 @@ while True:
 
     heatMap = cv2.addWeighted(heatMap, .995, mask, .005, 0);
 
-    if zone1.rectReady == True:
-        frame = zone1.drawSquare(frame)
+    if zones[0].rectReady == True:
+        frame = zones[0].drawSquare(frame)
 
     while time.localtime().tm_sec % 5 == 0:
         if saveImage == True:
-            # cv2.imwrite('./public/img/area' + str(imageNumber) + '.jpg', heatMap_color)
-            zone1.getRoiValue(frame)
+            uploadData.updateZoneInstance(zones, frame)
+            uploadData.updateHeatmapInstance(frame)
             saveImage = False
-            imageNumber += 1
-            print "Saved Image"
+            print "dataUploaded"
 
     saveImage = True
 

@@ -30,10 +30,10 @@ class Zone:
 
     def drawSquare(self, frame):
         cv2.rectangle(frame, (self.x, self.y), (self.x + self.width, self.y + self.height), (0,0,255), thickness=2)
-	cv2.putText(frame, 'Zone: ' + self.name, (self.x + 20, self.y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255))
+        cv2.putText(frame, 'Zone: ' + self.name, (self.x + 20, self.y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255))
         return frame
 
     def getRoiValue(self, frame):
         frame = frame[self.y : self.y + self.height, self.x : self.x + self.width]
-	frameMean = cv2.mean(frame)
-	return frameMean
+        frameMean = cv2.mean(frame)
+        return frameMean[0] + frameMean[1] + frameMean[2]
