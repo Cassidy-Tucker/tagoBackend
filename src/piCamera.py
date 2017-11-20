@@ -11,7 +11,10 @@ def nothing(x):
 # setup variables
 imageNumber = 1
 saveImage = True
-zone1 = Zone()
+zones = [Zone()]
+
+uploadData.createArea("TestArea", "it's in a room on the north side")
+uploadData.createZone(zones)
 
 # setup camera
 camera = PiCamera()
@@ -26,7 +29,7 @@ fgbg = cv2.createBackgroundSubtractorMOG2(varThreshold=80, detectShadows=True)
 
 # setup window
 cv2.namedWindow('image')
-cv2.setMouseCallback('image', zone1.setSquare)
+cv2.setMouseCallback('image', zone[0].setSquare)
 
 # setup blank heatmap
 heatMap = np.zeros((480, 640), dtype=np.uint8)
@@ -42,16 +45,15 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 
     heatMap_color = cv2.applyColorMap(heatMap, cv2.COLORMAP_JET)
 
-    if zone1.rectReady == True:
-        frame = zone1.drawSquare(image)
+    if zone[0].rectReady == True:
+        frame = zone[0].drawSquare(image)
 
     while time.localtime().tm_sec % 5 == 0:
         if saveImage == True:
-            cv2.imwrite('./public/img/area' + str(imageNumber) + '.jpg', heatMap_color)
-            zone1.getRoiValue(heatMap)
+            uploadData.updateZoneInstance(zones, frame)
+            uploadData.updateHeatmapInstance(frame)
             saveImage = False
-            imageNumber += 1
-            print "Saved Image"
+            print "dataUploaded"
 
     saveImage = True
 
