@@ -4,6 +4,7 @@ from picamera import PiCamera
 import numpy as np
 import time
 from zones import Zone
+import uploadData
 
 def nothing(x):
     pass
