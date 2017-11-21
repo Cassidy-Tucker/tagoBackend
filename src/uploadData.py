@@ -1,9 +1,12 @@
 from pymongo import MongoClient
+import bson
 from datetime import datetime
 import time
+import cv2
+import base64
 
-client = MongoClient('localhost', 27017)
-db = client.tago
+client = MongoClient('mongodb://Matt:skool16@ds113626.mlab.com:13626/tago_areas')
+db = client.tago_areas
 
 collections = {
     "areas": db.areas,
@@ -63,10 +66,14 @@ def updateZoneInstance(zones, frame):
         )
 
 def updateHeatmapInstance(heatmap):
+    saveImage(heatmap)
+    data = open('./public/img/heatmap.png')
+    data = base64.b64encode(data.read())
+
     heatmapId = collections['heatmaps'].insert_one(
         {
             "dateCreated" : getCurrentTime(),
-            "binaryVal" : heatmap,
+            "image" : data,
             "area" : areaId
         }
     ).inserted_id
@@ -79,6 +86,9 @@ def updateHeatmapInstance(heatmap):
             }
         }
     )
+
+def saveImage(heatmap):
+    cv2.imwrite('./public/img/heatmap.png', heatmap)
 
 def getCurrentTime():
     currentTime = datetime.utcnow()
