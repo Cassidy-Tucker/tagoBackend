@@ -3,4 +3,5 @@ node_modules
 *.swo
 *.pyc
 *.jpg
+*.png
 .DS_Store
