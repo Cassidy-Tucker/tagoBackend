@@ -5,8 +5,8 @@ import time
 import cv2
 import base64
 
-client = MongoClient('mongodb://Matt:skool16@ds113626.mlab.com:13626/tago_areas')
-db = client.tago_areas
+client = MongoClient('mongodb://Matt:skool16@ds113826.mlab.com:13826/tago')
+db = client.tago
 
 collections = {
     "domains": db.domains,
