@@ -12,7 +12,7 @@ imageNumber = 0
 
 zones = [Zone()]
 
-uploadData.createArea("TestArea", "it's in a room on the north side")
+uploadData.createDomain("Test Domain", "it's in a room on the north side")
 uploadData.createZone(zones)
 
 cap = cv2.VideoCapture(0)
