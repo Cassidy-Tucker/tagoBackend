@@ -5,19 +5,19 @@ import time
 import cv2
 import base64
 
-client = MongoClient('mongodb://Matt:skool16@ds113626.mlab.com:13626/tago_areas')
-db = client.tago_areas
+client = MongoClient('mongodb://Matt:skool16@ds113826.mlab.com:13826/tago')
+db = client.tago
 
 collections = {
-    "areas": db.areas,
+    "domains": db.domains,
     "zones": db.zones,
     "heatmaps": db.heatmaps
 }
 
-def createArea(name, description):
-    global areaId
+def createDomain(name, description):
+    global domainId
 
-    areaId = collections['areas'].insert_one(
+    domainId = collections['domains'].insert_one(
         {
             "name" : name,
             "description" : description,
@@ -32,14 +32,14 @@ def createZone(zones):
         zoneId = collections['zones'].insert_one(
             {
                 "name" : zone.name,
-                "area" : areaId,
+                "domain" : domainId,
                 "intervals" : [],
                 "dateCreated" : getCurrentTime()
             }
         ).inserted_id
 
-        collections['areas'].find_one_and_update(
-            {"_id" : areaId},
+        collections['domains'].find_one_and_update(
+            {"_id" : domainId},
             {"$push" :
                 {"zones" :
                     {
@@ -53,7 +53,7 @@ def createZone(zones):
 def updateZoneInstance(zones, frame):
     for zone in zones:
         collections['zones'].find_one_and_update(
-            { "area" : areaId , "name" : zone.name },
+            { "domain" : domainId , "name" : zone.name },
             { "$push" :
                 {"intervals" :
                     {
@@ -74,12 +74,12 @@ def updateHeatmapInstance(heatmap):
         {
             "dateCreated" : getCurrentTime(),
             "image" : data,
-            "area" : areaId
+            "domain" : domainId
         }
     ).inserted_id
 
-    collections['areas'].find_one_and_update(
-        { "_id" : areaId },
+    collections['domains'].find_one_and_update(
+        { "_id" : domainId },
         { "$push" :
             {"heatmaps" :
                 {"id" : heatmapId}
