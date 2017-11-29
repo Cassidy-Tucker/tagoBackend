@@ -1,8 +1,8 @@
 import cv2
 
 class Zone:
-    def __init__(self):
-	self.name = 'Zone1'
+    def __init__(self, name):
+	self.name = name
         self.x = -1
         self.y = -1
         self.width = -1
@@ -36,4 +36,5 @@ class Zone:
     def getRoiValue(self, frame):
         frame = frame[self.y : self.y + self.height, self.x : self.x + self.width]
         frameMean = cv2.mean(frame)
+        print frameMean
         return frameMean[0] + frameMean[1] + frameMean[2]
