@@ -29,8 +29,8 @@ camera = PiCamera()
 camera.vflip = True
 camera.hflip = True
 camera.resolution = (640, 480)
-camera.framerate = 32
-camera.iso = 800 
+camera.framerate = 30
+camera.iso = 1600
 rawCapture = PiRGBArray(camera)
 
 time.sleep(0.1)
@@ -39,15 +39,13 @@ camera.shutter_speed = camera.exposure_speed
 camera.exposure_mode = 'off'
 g = camera.awb_gains
 camera.awb_mode = 'off'
-camera.awb_gains = g
-camera.brightness = 75
+camera.awb_gains = (2,6)
 
 # setup background subtractor
 fgbg = cv2.createBackgroundSubtractorMOG2(history=1000)
 
 # setup window
 cv2.namedWindow('image')
-cv2.setMouseCallback('image', zones[cv2.getTrackbarPos('selected zone', 'image')].setSquare)
 cv2.createTrackbar('selected zone', 'image', 0, 2, setSelectedZone)
 
 # setup blank heatmap
@@ -56,7 +54,8 @@ heatMap = np.zeros((480, 640), dtype=np.uint8)
 time.sleep(0.1)
 
 for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
-    print 'Zone: ' + str(selected_zone)
+    cv2.setMouseCallback('image', zones[selected_zone].setSquare)
+   
     if base_image_capture:
         base_image = frame.array
         base_image_capture = False
@@ -74,6 +73,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     for zone in zones:
         if zone.rectReady == True:
             image = zone.drawSquare(image)
+            heatMap_color = zone.drawSquare(heatMap_color)
     
     cv2.putText(image, "Selected Zone: Zone" + str(selected_zone), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
 
@@ -83,12 +83,11 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
             uploadData.updateHeatmapInstance(heatMap_color)
             saveImage = False
             print "dataUploaded"
-
     saveImage = True
 
     cv2.imshow('diff', diff)
     cv2.imshow('image', image)
-    cv2.imshow('mask', mask)
+    cv2.imshow('base_image', base_image)
     cv2.imshow('heatmap', heatMap_color)
 
     rawCapture.truncate(0)
