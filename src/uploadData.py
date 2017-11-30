@@ -57,7 +57,6 @@ def updateZoneInstance(zones, frame):
             { "$push" :
                 {"intervals" :
                     {
-                        "date" : "testDate",
                         "activity" : zone.getRoiValue(frame),
                         "dateCreated" : getCurrentTime()
                     }
