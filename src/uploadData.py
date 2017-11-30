@@ -81,7 +81,10 @@ def updateHeatmapInstance(heatmap):
         { "_id" : domainId },
         { "$push" :
             {"heatmaps" :
-                {"id" : heatmapId}
+                {
+                    "dateCreated" : getCurrentTime(),
+                    "id" : heatmapId
+                }
             }
         }
     )
