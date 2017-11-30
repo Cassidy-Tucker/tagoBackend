@@ -57,7 +57,6 @@ def updateZoneInstance(zones, frame):
             { "$push" :
                 {"intervals" :
                     {
-                        "date" : "testDate",
                         "activity" : zone.getRoiValue(frame),
                         "dateCreated" : getCurrentTime()
                     }
@@ -82,7 +81,10 @@ def updateHeatmapInstance(heatmap):
         { "_id" : domainId },
         { "$push" :
             {"heatmaps" :
-                {"id" : heatmapId}
+                {
+                    "dateCreated" : getCurrentTime(),
+                    "id" : heatmapId
+                }
             }
         }
     )
