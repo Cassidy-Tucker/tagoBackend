@@ -19,7 +19,6 @@ imageNumber = 1
 saveImage = True
 zones = [Zone('zone1'),Zone('zone2'),Zone('zone3')]
 base_image_capture = True
-record_data = 0
 selected_zone = 0
 record_data = 0
 
