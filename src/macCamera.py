@@ -10,7 +10,7 @@ def nothing(x):
 saveImage = False
 imageNumber = 0
 
-zones = [Zone()]
+zones = [Zone('newZone')]
 
 uploadData.createDomain("Test Domain", "it's in a room on the north side")
 uploadData.createZone(zones)
@@ -28,13 +28,14 @@ cv2.namedWindow('frame')
 cv2.namedWindow('heatMap')
 
 cv2.createTrackbar('Subtract', 'heatMap', 1, 100, nothing)
-
+cv2.createTrackbar('Off-On', 'frame', 0, 1, nothing)
 # setup callbacks
 cv2.setMouseCallback('frame', zones[0].setSquare)
 
 heatMap = np.zeros((w/2, h/2), dtype=np.uint8)
 
 while True:
+    record_data = cv2.getTrackbarPos('Off-On', 'frame')
     _, frame = cap.read()
     w, h, _ = frame.shape
     frame = cv2.resize(frame, (h/2,w/2))
