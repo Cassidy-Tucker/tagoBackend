@@ -9,6 +9,7 @@ def nothing(x):
 
 saveImage = False
 imageNumber = 0
+record_data = 0
 
 zones = [Zone('newZone')]
 
@@ -29,6 +30,7 @@ cv2.namedWindow('heatMap')
 
 cv2.createTrackbar('Subtract', 'heatMap', 1, 100, nothing)
 cv2.createTrackbar('Off-On', 'frame', 0, 1, nothing)
+
 # setup callbacks
 cv2.setMouseCallback('frame', zones[0].setSquare)
 
@@ -36,6 +38,7 @@ heatMap = np.zeros((w/2, h/2), dtype=np.uint8)
 
 while True:
     record_data = cv2.getTrackbarPos('Off-On', 'frame')
+
     _, frame = cap.read()
     w, h, _ = frame.shape
     frame = cv2.resize(frame, (h/2,w/2))
@@ -52,7 +55,7 @@ while True:
         frame = zones[0].drawSquare(frame)
 
     while time.localtime().tm_sec % 5 == 0:
-        if saveImage == True:
+        if saveImage == True & record_data == 1:
             uploadData.updateZoneInstance(zones, frame)
             uploadData.updateHeatmapInstance(frame)
             saveImage = False

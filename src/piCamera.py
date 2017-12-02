@@ -21,7 +21,7 @@ zones = [Zone('zone1'),Zone('zone2'),Zone('zone3')]
 base_image_capture = True
 record_data = 0
 selected_zone = 0
-recording_date = 0
+record_data = 0
 
 uploadData.createDomain("TestArea", "it's in a room on the north side")
 uploadData.createZone(zones)
@@ -59,7 +59,7 @@ time.sleep(0.1)
 for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
     cv2.setMouseCallback('image', zones[selected_zone].setSquare)
 
-    recording_data = cv2.getTrackbarPos('Off-On', 'image')
+    record_data = cv2.getTrackbarPos('Off-On', 'image')
 
     if base_image_capture:
         base_image = frame.array
