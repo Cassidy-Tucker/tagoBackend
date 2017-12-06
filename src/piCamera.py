@@ -34,16 +34,16 @@ camera.framerate = 30
 camera.iso = 1600
 rawCapture = PiRGBArray(camera)
 
-time.sleep(0.1)
+time.sleep(0.5)
 
 camera.shutter_speed = camera.exposure_speed
 camera.exposure_mode = 'off'
 g = camera.awb_gains
 camera.awb_mode = 'off'
-camera.awb_gains = (2,6)
+camera.awb_gains = g 
 
 # setup background subtractor
-fgbg = cv2.createBackgroundSubtractorMOG2(history=5000)
+fgbg = cv2.createBackgroundSubtractorMOG2(history=2500)
 
 # setup window
 cv2.namedWindow('image')
@@ -63,11 +63,12 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     if base_image_capture:
         base_image = frame.array
         base_image_capture = False
-
-    image = frame.array
-
+    
+    image = np.array((480, 640), np.uint8)
+    image = np.copy(frame.array)
+    
     diff = getDiff(base_image, image)
-
+    diff = cv2.threshold(diff, 30, 255, cv2.THRESH_BINARY)[1]
     mask = fgbg.apply(diff)
 
     heatMap = cv2.addWeighted(heatMap, 0.97, mask, 0.03, 0)
@@ -99,6 +100,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 
     if cv2.waitKey(1) & 0xff == ord('p'):
         base_image = frame.array
+        base_image = cv2.GaussianBlur(base_image, (17, 17), 0)
 
     if cv2.waitKey(1) & 0xff == ord('q'):
         break
