@@ -43,7 +43,7 @@ camera.awb_mode = 'off'
 camera.awb_gains = (2,6)
 
 # setup background subtractor
-fgbg = cv2.createBackgroundSubtractorMOG2(history=1000)
+fgbg = cv2.createBackgroundSubtractorMOG2(history=5000)
 
 # setup window
 cv2.namedWindow('image')
@@ -79,8 +79,6 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
             image = zone.drawSquare(image)
             heatMap_color = zone.drawSquare(heatMap_color)
 
-    cv2.putText(image, "Selected Zone: Zone" + str(selected_zone), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
-
     while time.localtime().tm_sec % 5 == 0:
         if saveImage == True & record_data == 1:
             uploadData.updateZoneInstance(zones, heatMap)
@@ -89,12 +87,18 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
             print "dataUploaded"
     saveImage = True
 
+    cv2.putText(image, "Selected Zone: Zone" + str(selected_zone), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
+    cv2.putText(image, "Press P to take a new base image", (50, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
+
     cv2.imshow('diff', diff)
     cv2.imshow('image', image)
     cv2.imshow('base_image', base_image)
     cv2.imshow('heatmap', heatMap_color)
 
     rawCapture.truncate(0)
+
+    if cv2.waitKey(1) & 0xff == ord('p'):
+        base_image = frame.array
 
     if cv2.waitKey(1) & 0xff == ord('q'):
         break
