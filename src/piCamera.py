@@ -3,9 +3,7 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import numpy as np
 import time
-from zones import Zone
-import uploadData
-from compare import getDiff
+from tago import *
 
 def nothing(x):
     pass
@@ -22,8 +20,8 @@ base_image_capture = True
 selected_zone = 0
 record_data = 0
 
-uploadData.createDomain("TestArea", "it's in a room on the north side")
-uploadData.createZone(zones)
+createDomain("TestArea", "it's in a room on the north side")
+createZone(zones)
 
 # setup camera
 camera = PiCamera()
@@ -40,7 +38,7 @@ camera.shutter_speed = camera.exposure_speed
 camera.exposure_mode = 'off'
 g = camera.awb_gains
 camera.awb_mode = 'off'
-camera.awb_gains = g 
+camera.awb_gains = g
 
 # setup background subtractor
 fgbg = cv2.createBackgroundSubtractorMOG2(history=2500)
@@ -63,10 +61,10 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     if base_image_capture:
         base_image = frame.array
         base_image_capture = False
-    
+
     image = np.array((480, 640), np.uint8)
     image = np.copy(frame.array)
-    
+
     diff = getDiff(base_image, image)
     diff = cv2.threshold(diff, 30, 255, cv2.THRESH_BINARY)[1]
     mask = fgbg.apply(diff)
@@ -82,8 +80,8 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 
     while time.localtime().tm_sec % 5 == 0:
         if saveImage == True & record_data == 1:
-            uploadData.updateZoneInstance(zones, heatMap)
-            uploadData.updateHeatmapInstance(heatMap_color)
+            updateZoneInstance(zones, heatMap)
+            updateHeatmapInstance(heatMap_color)
             saveImage = False
             print "dataUploaded"
     saveImage = True
