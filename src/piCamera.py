@@ -102,7 +102,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 
     if cv2.waitKey(1) & 0xff == ord('p'):
         base_image = frame.array
-        base_image = cv2.GaussianBlur(base_image, (17, 17), 0)
+        # base_image = cv2.GaussianBlur(base_image, (17, 17), 0)
 
     if cv2.waitKey(1) & 0xff == ord('q'):
         break

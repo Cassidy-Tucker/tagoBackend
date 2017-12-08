@@ -23,11 +23,13 @@ def saveImage(heatmap):
     cv2.imwrite('./public/img/heatmap.png', heatmap)
 
 def getDiff(base_image, current_image):
+    # base_image = cv2.cvtColor(base_image, cv2.COLOR_BGR2GRAY)
+    # current_image = cv2.cvtColor(current_image, cv2.COLOR_BGR2GRAY)
     base_image = cv2.GaussianBlur(base_image, (17, 17), 0)
     current_image = cv2.GaussianBlur(current_image, (17, 17), 0)
 
     diff = cv2.absdiff(base_image, current_image)
-
+    diff = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
     _, mask = cv2.threshold(diff, 25, 255, cv2.THRESH_BINARY)
 
     return diff
