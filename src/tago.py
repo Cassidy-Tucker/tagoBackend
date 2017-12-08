@@ -142,6 +142,6 @@ class Zone:
 
     def getRoiValue(self, frame):
         frame = frame[self.y : self.y + self.height, self.x : self.x + self.width]
-        frameMean = cv2.mean(frame)
+        frameMean = round(cv2.mean(frame)[0] / 255, 2)
         print frameMean
-        return frameMean[0] + frameMean[1] + frameMean[2]
+        return frameMean
