@@ -3,10 +3,7 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import numpy as np
 import time
-#from zones import Zone
-#import uploadData
-#from compare import getDiff
-import * from tago
+from tago import *
 
 def nothing(x):
     pass
@@ -23,8 +20,8 @@ base_image_capture = True
 selected_zone = 0
 record_data = 0
 
-uploadData.createDomain("TestArea", "it's in a room on the north side")
-uploadData.createZone(zones)
+createDomain("TestArea", "it's in a room on the north side")
+createZone(zones)
 
 # setup camera
 camera = PiCamera()
@@ -83,8 +80,8 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 
     while time.localtime().tm_sec % 5 == 0:
         if saveImage == True & record_data == 1:
-            uploadData.updateZoneInstance(zones, heatMap)
-            uploadData.updateHeatmapInstance(heatMap_color)
+            updateZoneInstance(zones, heatMap)
+            updateHeatmapInstance(heatMap_color)
             saveImage = False
             print "dataUploaded"
     saveImage = True
