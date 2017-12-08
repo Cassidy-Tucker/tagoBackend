@@ -85,7 +85,11 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
             saveImage = False
             print "dataUploaded"
     saveImage = True
-
+    
+    if record_data == 1:
+        cv2.circle(image, (640-60, 50), 10, (0, 0, 255), -1)
+        cv2.putText(image, "RECORDING", (640 - 110, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
+        
     cv2.putText(image, "Selected Zone: Zone" + str(selected_zone), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
     cv2.putText(image, "Press P to take a new base image", (50, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
 
